@@ -10,4 +10,8 @@
     <ProjectReference Include="..\REALITY_FRAMEWORKS_DLL\RealityFrameworks.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Conditions\" />
+  </ItemGroup>
+
 </Project>

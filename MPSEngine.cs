@@ -3,10 +3,10 @@ using TokenTransform = RealityFrameworks.Transform<MPSToken>;
 
 struct FileRenameInfo
 {
-    public MPSToken Root;
+    public MPSToken? Root;
     public string RenameTo;
 
-    public FileRenameInfo(MPSToken token = null, string rename = "")
+    public FileRenameInfo(MPSToken? token = null, string rename = "")
     {
         Root = token;
         RenameTo = rename;
@@ -29,12 +29,18 @@ public class MPSEngine
     private bool AlwaysLowcaseExtension { get; set; } = false;
 
     //  Map of files to rename
-    private Dictionary<ulong, FileRenameInfo> mRenameToMap = new();
+    private Dictionary<ulong, FileRenameInfo> mRenamesMap = new();
     
     //  List of engine observers
     private List<IEngineObserver> mObservers = new();
     
+    public bool ApplyTransforms { get; set; } = true;
+
+    //  List of transforms
     private List<TokenTransform> mTransforms = new();
+
+    public IReadOnlyList<TokenTransform> Transforms 
+        => mTransforms.AsReadOnly();
 
     public MPSEngine()
     {
@@ -42,6 +48,25 @@ public class MPSEngine
         mSelectedSubtoken = null;
         DefaultSeparators = string.Empty;
         AlwaysLowcaseExtension = false;
+    }
+
+    public void ApplyTransformsToToken(MPSToken token)
+    {
+        if (token == null)
+            return;
+
+        foreach (var transform in mTransforms)
+        {
+            if (transform.Enabled)
+                transform.Apply(token);
+        }
+
+        //  apply on subtokens
+        if (token.Subtokens.Any())
+        {
+            foreach (var subToken in token.Subtokens)
+                ApplyTransformsToToken(subToken);
+        }
     }
 
     public void SelectMasterToken(string fileName)
@@ -56,40 +81,41 @@ public class MPSEngine
 
         var hash = fileName.GetHashCode();
 
-        if (mRenameToMap.TryGetValue((ulong)hash, out var mapStruct))
+        if (mRenamesMap.TryGetValue((ulong)hash, out var mapStruct))
         {
             mMasterToken = mapStruct.Root;
             mRenameTo = mapStruct.RenameTo;
         }
-        //else
-        //{
-        //    mMasterToken = new MPSToken(null, fileName, m_defaultSeparators, false);
-        //    var fnClean = RemoveStringsFromText(fileName);
+        else
+        {
+            mMasterToken = new MPSToken(null, fileName, DefaultSeparators, false);
+            
+            //var fnClean = RemoveStringsFromText(fileName);
+            var fnClean = fileName;
+            if (fnClean != fileName)
+            {
+                mMasterToken.AddSubtoken(fnClean, 0);
+                var sub = mMasterToken.Subtokens.FirstOrDefault();
+                if (sub != null)
+                {
+                    sub.Separators = DefaultSeparators;
+                    sub.Split();
+                    //if (IsApplyTransforms())
+                    //    ApplyTransforms(sub);
+                }
+            }
+            else
+            {
+                mMasterToken.Split();
+                //if (IsApplyTransforms())
+                //    ApplyTransforms(mMasterToken);
+            }
 
-        //    if (fnClean != fileName)
-        //    {
-        //        mMasterToken.InsertSubtoken(fnClean, 0);
-        //        var sub = mMasterToken.SubTokens.FirstOrDefault();
-        //        if (sub != null)
-        //        {
-        //            sub.SetSeparators(m_defaultSeparators);
-        //            sub.Split();
-        //            if (IsApplyTransforms())
-        //                ApplyTransforms(sub);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        mMasterToken.Split();
-        //        if (IsApplyTransforms())
-        //            ApplyTransforms(mMasterToken);
-        //    }
+            mRenameTo = ReconstructOutput(mMasterToken);
+            mRenamesMap[(ulong)hash] = new FileRenameInfo(mMasterToken, mRenameTo);
+        }
 
-        //    mRenameTo = ReconstructOutput(mMasterToken);
-        //    mRenameMap[(ulong)hash] = new MPSFilesMapStruct(mMasterToken, mRenameTo);
-        //}
-
-        //m_selectedSubtoken = mMasterToken;
+        mSelectedSubtoken = mMasterToken;
     }
 
     public void SelectSubtoken(MPSToken token, bool updateOutput = true)
@@ -234,9 +260,9 @@ public class MPSEngine
         renameTo = string.Empty;
         var hash = fileName.GetHashCode();
 
-        if (mRenameToMap.ContainsKey((ulong)hash))
+        if (mRenamesMap.ContainsKey((ulong)hash))
         {
-            renameTo = mRenameToMap[(ulong)hash].RenameTo;
+            renameTo = mRenamesMap[(ulong)hash].RenameTo;
             return true;
         }
 
@@ -245,12 +271,13 @@ public class MPSEngine
 
     public bool HasFilesToRename()
     {
-        return mRenameToMap.Values.Any(
+        return mRenamesMap.Values.Any(
             entry => entry.Root.Text != entry.RenameTo
         );
     }
 
-    public void ClearFilesMap() => mRenameToMap.Clear();
+    public void ClearFilesMap() 
+        => mRenamesMap.Clear();
 
     public bool RenameOne(string path, string srcFile, string dstFile, bool updateMapEntry = false)
     {
@@ -274,9 +301,9 @@ public class MPSEngine
             if (updateMapEntry)
             {
                 var hash = srcFile.GetHashCode();
-                if (mRenameToMap.ContainsKey((ulong)hash))
+                if (mRenamesMap.ContainsKey((ulong)hash))
                 {
-                    var record = mRenameToMap[(ulong)hash];
+                    var record = mRenamesMap[(ulong)hash];
                     record.Root.Text = dstFile;
                 }
             }
@@ -291,7 +318,7 @@ public class MPSEngine
 
     public void RenameAll(string path)
     {
-        foreach (var entry in mRenameToMap)
+        foreach (var entry in mRenamesMap)
         {
             var srcFile = entry.Value.Root.Text;
             var dstFile = entry.Value.RenameTo;
