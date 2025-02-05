@@ -32,7 +32,7 @@ public class MPSToken
     }
 
     // Setters and Getters
-    public MPSToken Parent => _parent;
+    public MPSToken Parent { get { return _parent; } set { _parent = value; } }
     public string Text { get => _text; set => _text = value; }
     public string Separators { get => _separators; set { _separators = value; if (string.IsNullOrEmpty(_separators)) CleanupToken(); } }
     public bool Discard { get => _discard; set => SetDiscard(value); }
@@ -55,6 +55,11 @@ public class MPSToken
     public void RemoveSubtoken(MPSToken token)
     {
         _subtokens.Remove(token);
+    }
+
+    public void ClearSubtokens()
+    {
+        _subtokens.Clear();
     }
 
     public bool IsSubtoken(MPSToken token) => _subtokens.Contains(token);
