@@ -9,20 +9,19 @@ public enum EMPSDirection
 
 public class MPSToken
 {
-    private MPSToken _parent;
+    private MPSToken? _parent;
     private string _text;
     private string _separators;
     private bool _discard;
-    private List<MPSToken> _subtokens;
+    private List<MPSToken> _subtokens = new();
 
     // Constructor
-    public MPSToken(MPSToken parent = null, string text = "", string separators = "", bool discard = false)
+    public MPSToken(MPSToken? parent = null, string text = "", string separators = "", bool discard = false)
     {
         _parent = parent;
         _text = text;
         _separators = separators;
         _discard = discard;
-        _subtokens = new List<MPSToken>();
     }
 
     // Destructor (for cleanup)
@@ -32,7 +31,7 @@ public class MPSToken
     }
 
     // Setters and Getters
-    public MPSToken Parent { get { return _parent; } set { _parent = value; } }
+    public MPSToken? Parent { get { return _parent; } set { _parent = value; } }
     public string Text { get => _text; set => _text = value; }
     public string Separators { get => _separators; set { _separators = value; if (string.IsNullOrEmpty(_separators)) CleanupToken(); } }
     public bool Discard { get => _discard; set => SetDiscard(value); }
@@ -52,17 +51,13 @@ public class MPSToken
         }
     }
 
-    public void RemoveSubtoken(MPSToken token)
-    {
-        _subtokens.Remove(token);
-    }
+    public void RemoveSubtoken(MPSToken token) => _subtokens.Remove(token);
 
     public void ClearSubtokens()
-    {
-        _subtokens.Clear();
-    }
+        => _subtokens.Clear();
 
-    public bool IsSubtoken(MPSToken token) => _subtokens.Contains(token);
+    public bool IsSubtoken(MPSToken token) 
+        => _subtokens.Contains(token);
 
     public void ShiftSubtoken(MPSToken subToken, EMPSDirection direction)
     {

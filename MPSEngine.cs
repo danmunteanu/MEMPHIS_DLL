@@ -1,5 +1,4 @@
 ﻿using RealityFrameworks;
-
 using TokenTransform = RealityFrameworks.Transform<MPSToken>;
 
 struct FileRenameInfo
@@ -14,7 +13,7 @@ struct FileRenameInfo
     }
 };
 
-public class MPSEngine : MPSTransformsContainer
+public class MPSEngine
 {
     // Fields
     private MPSToken? mMasterToken;
@@ -34,6 +33,8 @@ public class MPSEngine : MPSTransformsContainer
     
     //  List of engine observers
     private List<IEngineObserver> mObservers = new();
+    
+    private List<TokenTransform> mTransforms = new();
 
     public MPSEngine()
     {
