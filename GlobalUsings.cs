@@ -1,3 +1,3 @@
-﻿global using TokenCondition = RealityFrameworks.Conditions.Condition<MPSToken>;
-global using TokenAction = RealityFrameworks.Actions.Action<MPSToken>;
-global using TokenTransform = RealityFrameworks.Transform<MPSToken>;
+﻿global using TokenCondition = RealityFrameworks.Conditions.Condition<Memphis.MPSToken>;
+global using TokenAction = RealityFrameworks.Actions.Action<Memphis.MPSToken>;
+global using TokenTransform = RealityFrameworks.Transform<Memphis.MPSToken>;

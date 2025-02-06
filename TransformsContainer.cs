@@ -1,4 +1,4 @@
-﻿namespace MEMPHIS
+﻿namespace Memphis
 {
     //  Contains Transforms and provides an interface for handling them
     public class TransformsContainer

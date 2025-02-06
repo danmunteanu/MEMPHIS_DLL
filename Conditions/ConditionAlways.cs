@@ -1,6 +1,6 @@
-﻿namespace MEMPHIS.Conditions
+﻿namespace Memphis.Conditions
 {
-    internal class ConditionAlways : TokenCondition
+    public class ConditionAlways : TokenCondition
     {
         public ConditionAlways() { }
 
