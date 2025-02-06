@@ -36,7 +36,7 @@
         public bool Discard { get => _discard; set => SetDiscard(value); }
         public IReadOnlyList<Token> Subtokens => mSubtokens.AsReadOnly();
 
-        public void InsertSubtoken(string text, int pos = int.MaxValue)
+        public Token InsertSubtoken(string text, int pos = int.MaxValue)
         {
             var newToken = new Token(this, text);
             if (pos == int.MaxValue || pos >= mSubtokens.Count)
@@ -47,6 +47,7 @@
             {
                 mSubtokens.Insert(pos, newToken);
             }
+            return newToken;
         }
 
         public void RemoveSubtoken(Token token)

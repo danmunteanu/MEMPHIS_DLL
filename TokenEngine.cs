@@ -64,6 +64,7 @@
 
         public void SelectMasterToken(string fileName)
         {
+            //  Did we get an empty file name?
             if (string.IsNullOrEmpty(fileName))
             {
                 mMasterToken = null;
@@ -72,42 +73,48 @@
                 return;
             }
 
+            //  Compute hash for file name
             var hash = fileName.GetHashCode();
 
+            //  Was it already added to the map?
             if (mRenamesMap.TryGetValue((ulong)hash, out var mapStruct))
             {
+                //  load master token and rename to from the map
                 mMasterToken = mapStruct.Root;
                 mRenameTo = mapStruct.RenameTo;
             }
             else
             {
+                //  Must add a new master token
                 mMasterToken = new Token(null, fileName, DefaultSeparators, false);
 
-                //var fnClean = RemoveStringsFromText(fileName);
-                var fnClean = fileName;
-                if (fnClean != fileName)
+                //  Remove predefined strings from the file name
+
+                Token? tokenToSplit = mMasterToken;
+
+                //  Remove predefined strings first
+                //var cleanFileName = RemoveStringsFromText(fileName);
+                var cleanFileName = fileName;
+
+                //  if the file name was modified, insert it as the first subtoken
+                if (cleanFileName != fileName)
+                    tokenToSplit = mMasterToken.InsertSubtoken(cleanFileName);
+
+                if (tokenToSplit != null)
                 {
-                    mMasterToken.InsertSubtoken(fnClean, 0);
-                    var sub = mMasterToken.Subtokens.FirstOrDefault();
-                    if (sub != null)
-                    {
-                        sub.Separators = DefaultSeparators;
-                        sub.Split();
-                        //if (IsApplyTransforms())
-                        //    ApplyTransforms(sub);
-                    }
-                }
-                else
-                {
-                    mMasterToken.Split();
-                    //if (IsApplyTransforms())
-                    //    ApplyTransforms(mMasterToken);
+                    tokenToSplit.Separators = DefaultSeparators;
+                    tokenToSplit.Split();
+
+                    //  Apply the transforms chain
+                    if (ApplyTransforms)
+                        ApplyTransformsToToken(tokenToSplit);
                 }
 
                 mRenameTo = ReconstructOutput(mMasterToken);
                 mRenamesMap[(ulong)hash] = new FileRenameInfo(mMasterToken, mRenameTo);
             }
 
+            //  Select master token
             mSelectedSubtoken = mMasterToken;
         }
 
