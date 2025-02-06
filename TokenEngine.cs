@@ -2,21 +2,21 @@
 {
     struct FileRenameInfo
     {
-        public MPSToken? Root;
+        public Token? Root;
         public string RenameTo;
 
-        public FileRenameInfo(MPSToken? token = null, string rename = "")
+        public FileRenameInfo(Token? token = null, string rename = "")
         {
             Root = token;
             RenameTo = rename;
         }
     };
 
-    public partial class MPSEngine : TransformsContainer
+    public partial class TokenEngine : TransformContainer
     {
         // Fields
-        private MPSToken? mMasterToken;
-        private MPSToken? mSelectedSubtoken;
+        private Token? mMasterToken;
+        private Token? mSelectedSubtoken;
 
         private string? mRenameTo;
         public string? RenameTo { get => mRenameTo; }
@@ -35,7 +35,7 @@
 
         public bool ApplyTransforms { get; set; } = true;
 
-        public MPSEngine()
+        public TokenEngine()
         {
             //  Default settings
             mSelectedSubtoken = null;
@@ -43,7 +43,7 @@
             AlwaysLowcaseExtension = false;
         }
 
-        public void ApplyTransformsToToken(MPSToken token)
+        public void ApplyTransformsToToken(Token token)
         {
             if (token == null)
                 return;
@@ -81,7 +81,7 @@
             }
             else
             {
-                mMasterToken = new MPSToken(null, fileName, DefaultSeparators, false);
+                mMasterToken = new Token(null, fileName, DefaultSeparators, false);
 
                 //var fnClean = RemoveStringsFromText(fileName);
                 var fnClean = fileName;
@@ -111,7 +111,7 @@
             mSelectedSubtoken = mMasterToken;
         }
 
-        public void SelectSubtoken(MPSToken token, bool updateOutput = true)
+        public void SelectSubtoken(Token token, bool updateOutput = true)
         {
             if (token == null) return;
 
@@ -129,7 +129,7 @@
         }
 
         public void UpdateToken(
-            ref MPSToken token,
+            ref Token token,
             string text,
             string separators,
             bool discard,
@@ -171,7 +171,7 @@
             //}
         }
 
-        public void ShiftSelectedSubtoken(EMPSDirection direction)
+        public void ShiftSelectedSubtoken(EShiftDirection direction)
         {
             if (mSelectedSubtoken == null) return;
 
@@ -193,7 +193,7 @@
             //}
         }
 
-        public void InsertText(string textToInsert, EMPSDirection direction)
+        public void InsertText(string textToInsert, EShiftDirection direction)
         {
             if (mSelectedSubtoken == null) return;
 
@@ -202,10 +202,10 @@
             var parent = mSelectedSubtoken.Parent;
             if (parent == null) return;
 
-            var subtokens = (parent.Subtokens as IList<MPSToken>);
+            var subtokens = (parent.Subtokens as IList<Token>);
 
             var selTokenPos = subtokens?.IndexOf(mSelectedSubtoken) ?? int.MaxValue;
-            if (direction == EMPSDirection.Left)
+            if (direction == EShiftDirection.Left)
                 parent.InsertSubtoken(textToInsert, selTokenPos);
             else
                 parent.InsertSubtoken(textToInsert, selTokenPos + 1);
@@ -213,13 +213,13 @@
             mRenameTo = ReconstructOutput(mMasterToken);
         }
 
-        public void ChangeCase(MPSToken token, bool upcase, bool onlyFirst, bool recursive)
+        public void ChangeCase(Token token, bool upcase, bool onlyFirst, bool recursive)
         {
             //var changeCaseAction = new MPSActionChangeCase(this, upcase, !onlyFirst, recursive);
             //changeCaseAction.Apply(token);
         }
 
-        public string ReconstructOutput(MPSToken token)
+        public string ReconstructOutput(Token token)
         {
             string name = string.Empty;
             string separator = string.Empty;
@@ -325,12 +325,12 @@
         public void ClearObservers()
             => mObservers.Clear();
 
-        public void Update(MPSToken token)
+        public void Update(Token token)
         {
             //Custom update logic for MPSEngine
         }
 
-        public bool IsTokenCurrentRoot(MPSToken token)
+        public bool IsTokenCurrentRoot(Token token)
         {
             return token == mMasterToken;
         }

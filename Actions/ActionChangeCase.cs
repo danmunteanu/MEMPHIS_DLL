@@ -6,9 +6,9 @@
         public bool OnlyFirst { get; set; } = true;
         public bool Recursive { get; set; } = true;
 
-        private MPSEngineBase _engineBase;
+        private EngineBase _engineBase;
 
-        public ActionChangeCase(MPSEngineBase engineBase, bool upcase, bool all, bool recursive)
+        public ActionChangeCase(EngineBase engineBase, bool upcase, bool all, bool recursive)
         {
             _engineBase = engineBase;
 
@@ -17,7 +17,7 @@
             Recursive = recursive;
         }
 
-        public override void Execute(MPSToken token)
+        public override void Execute(Token token)
         {
             if (token == null)
                 return;

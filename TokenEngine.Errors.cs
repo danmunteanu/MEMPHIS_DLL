@@ -1,6 +1,6 @@
 ﻿namespace Memphis
 {
-    public partial class MPSEngine
+    public partial class TokenEngine
     {
         // Methods for message handling
         public void PushMessage(string msg)

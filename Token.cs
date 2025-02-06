@@ -1,22 +1,21 @@
 ﻿namespace Memphis
 {
-
-    public enum EMPSDirection
+    public enum EShiftDirection
     {
         Left,
         Right
     }
 
-    public class MPSToken
+    public class Token
     {
-        private MPSToken? _parent;
+        private Token? _parent;
         private string _text;
         private string _separators;
         private bool _discard;
-        private List<MPSToken> mSubtokens = new();
+        private List<Token> mSubtokens = new();
 
         // Constructor
-        public MPSToken(MPSToken? parent = null, string text = "", string separators = "", bool discard = false)
+        public Token(Token? parent = null, string text = "", string separators = "", bool discard = false)
         {
             _parent = parent;
             _text = text;
@@ -25,21 +24,21 @@
         }
 
         // Destructor (for cleanup)
-        ~MPSToken()
+        ~Token()
         {
             CleanupToken();
         }
 
         // Setters and Getters
-        public MPSToken? Parent { get { return _parent; } set { _parent = value; } }
+        public Token? Parent { get { return _parent; } set { _parent = value; } }
         public string Text { get => _text; set => _text = value; }
         public string Separators { get => _separators; set { _separators = value; if (string.IsNullOrEmpty(_separators)) CleanupToken(); } }
         public bool Discard { get => _discard; set => SetDiscard(value); }
-        public IReadOnlyList<MPSToken> Subtokens => mSubtokens.AsReadOnly();
+        public IReadOnlyList<Token> Subtokens => mSubtokens.AsReadOnly();
 
         public void InsertSubtoken(string text, int pos = int.MaxValue)
         {
-            var newToken = new MPSToken(this, text);
+            var newToken = new Token(this, text);
             if (pos == int.MaxValue || pos >= mSubtokens.Count)
             {
                 mSubtokens.Add(newToken);
@@ -50,30 +49,30 @@
             }
         }
 
-        public void RemoveSubtoken(MPSToken token)
+        public void RemoveSubtoken(Token token)
             => mSubtokens.Remove(token);
 
         public void ClearSubtokens()
             => mSubtokens.Clear();
 
-        public bool IsSubtoken(MPSToken token)
+        public bool IsSubtoken(Token token)
             => mSubtokens.Contains(token);
 
-        public void ShiftSubtoken(MPSToken subToken, EMPSDirection direction)
+        public void ShiftSubtoken(Token subToken, EShiftDirection direction)
         {
             if (subToken == null || mSubtokens.Count == 0) return;
 
             int index = mSubtokens.IndexOf(subToken);
             if (index == -1) return;
 
-            if (direction == EMPSDirection.Left && index > 0)
+            if (direction == EShiftDirection.Left && index > 0)
             {
                 // Swap with previous
                 var temp = mSubtokens[index - 1];
                 mSubtokens[index - 1] = mSubtokens[index];
                 mSubtokens[index] = temp;
             }
-            else if (direction == EMPSDirection.Right && index < mSubtokens.Count - 1)
+            else if (direction == EShiftDirection.Right && index < mSubtokens.Count - 1)
             {
                 // Swap with next
                 var temp = mSubtokens[index + 1];
@@ -94,7 +93,7 @@
 
             foreach (var token in tokens)
             {
-                var subToken = new MPSToken(this, token, _separators, _discard);
+                var subToken = new Token(this, token, _separators, _discard);
                 mSubtokens.Add(subToken);
             }
         }
@@ -120,17 +119,17 @@
         }
 
         // Utility methods for finding leaf nodes
-        public MPSToken? FindFirstLeafSubtoken(bool includeDiscarded)
+        public Token? FindFirstLeafSubtoken(bool includeDiscarded)
         {
             return FindFirstLeafSubtoken(this, includeDiscarded);
         }
 
-        public MPSToken? FindLastLeafSubtoken(bool includeDiscarded)
+        public Token? FindLastLeafSubtoken(bool includeDiscarded)
         {
             return FindLastLeafSubtoken(this, includeDiscarded);
         }
 
-        private MPSToken? FindFirstLeafSubtoken(MPSToken token, bool includeDiscarded)
+        private Token? FindFirstLeafSubtoken(Token token, bool includeDiscarded)
         {
             if (token == null) return null;
             if (token.mSubtokens.Count == 0) return token;
@@ -146,12 +145,12 @@
             return null;
         }
 
-        private MPSToken? FindLastLeafSubtoken(MPSToken token, bool includeDiscarded)
+        private Token? FindLastLeafSubtoken(Token token, bool includeDiscarded)
         {
             if (token == null) return null;
             if (token.mSubtokens.Count == 0) return token;
 
-            MPSToken? last = null;
+            Token? last = null;
             foreach (var subToken in token.mSubtokens)
             {
                 if (includeDiscarded || !subToken._discard)

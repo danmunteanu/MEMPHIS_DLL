@@ -2,7 +2,7 @@
 {
     public class ConditionIsNumeric : TokenCondition
     {
-        public override bool Evaluate(MPSToken token)
+        public override bool Evaluate(Token token)
         {
             if (token == null)
                 return false;

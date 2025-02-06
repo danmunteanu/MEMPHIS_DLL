@@ -9,7 +9,7 @@
             return "Always";
         }
 
-        public override bool Evaluate(MPSToken arg)
+        public override bool Evaluate(Token arg)
         {
             //  always true
             return true;
