@@ -1,4 +1,7 @@
-﻿class ActionChangeCase : RealityFrameworks.Actions.Action<MPSToken>
+﻿namespace Memphis.Actions
+{
+
+class ActionChangeCase : TokenAction
 {
     public bool Upcase { get; set; } = true;
     public bool OnlyFirst { get; set; } = true;
@@ -80,4 +83,6 @@
     {
         return "ChangeCase";
     }
+}
+
 }

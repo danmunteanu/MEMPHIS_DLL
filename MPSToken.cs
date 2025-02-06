@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-public enum EMPSDirection
+﻿public enum EMPSDirection
 {
     Left,
     Right
@@ -13,7 +10,7 @@ public class MPSToken
     private string _text;
     private string _separators;
     private bool _discard;
-    private List<MPSToken> _subtokens = new();
+    private List<MPSToken> mSubtokens = new();
 
     // Constructor
     public MPSToken(MPSToken? parent = null, string text = "", string separators = "", bool discard = false)
@@ -35,50 +32,50 @@ public class MPSToken
     public string Text { get => _text; set => _text = value; }
     public string Separators { get => _separators; set { _separators = value; if (string.IsNullOrEmpty(_separators)) CleanupToken(); } }
     public bool Discard { get => _discard; set => SetDiscard(value); }
-    public IReadOnlyList<MPSToken> Subtokens => _subtokens.AsReadOnly();
+    public IReadOnlyList<MPSToken> Subtokens => mSubtokens.AsReadOnly();
 
-    // Subtoken management
-    public void AddSubtoken(string text, int pos = int.MaxValue)
+    public void InsertSubtoken(string text, int pos = int.MaxValue)
     {
         var newToken = new MPSToken(this, text);
-        if (pos == int.MaxValue || pos >= _subtokens.Count)
+        if (pos == int.MaxValue || pos >= mSubtokens.Count)
         {
-            _subtokens.Add(newToken);
+            mSubtokens.Add(newToken);
         }
         else
         {
-            _subtokens.Insert(pos, newToken);
+            mSubtokens.Insert(pos, newToken);
         }
     }
 
-    public void RemoveSubtoken(MPSToken token) => _subtokens.Remove(token);
+    public void RemoveSubtoken(MPSToken token) 
+        => mSubtokens.Remove(token);
 
     public void ClearSubtokens()
-        => _subtokens.Clear();
+        => mSubtokens.Clear();
 
     public bool IsSubtoken(MPSToken token) 
-        => _subtokens.Contains(token);
+        => mSubtokens.Contains(token);
 
     public void ShiftSubtoken(MPSToken subToken, EMPSDirection direction)
     {
-        if (subToken == null || _subtokens.Count == 0) return;
+        if (subToken == null || mSubtokens.Count == 0) return;
 
-        int index = _subtokens.IndexOf(subToken);
+        int index = mSubtokens.IndexOf(subToken);
         if (index == -1) return;
 
         if (direction == EMPSDirection.Left && index > 0)
         {
             // Swap with previous
-            var temp = _subtokens[index - 1];
-            _subtokens[index - 1] = _subtokens[index];
-            _subtokens[index] = temp;
+            var temp = mSubtokens[index - 1];
+            mSubtokens[index - 1] = mSubtokens[index];
+            mSubtokens[index] = temp;
         }
-        else if (direction == EMPSDirection.Right && index < _subtokens.Count - 1)
+        else if (direction == EMPSDirection.Right && index < mSubtokens.Count - 1)
         {
             // Swap with next
-            var temp = _subtokens[index + 1];
-            _subtokens[index + 1] = _subtokens[index];
-            _subtokens[index] = temp;
+            var temp = mSubtokens[index + 1];
+            mSubtokens[index + 1] = mSubtokens[index];
+            mSubtokens[index] = temp;
         }
     }
 
@@ -86,53 +83,56 @@ public class MPSToken
     {
         if (string.IsNullOrEmpty(_separators)) return;
 
-        var tokens = _text.Split(new[] { _separators }, StringSplitOptions.None);
+        var tokens = _text.Split(
+            new[] { _separators }, 
+            StringSplitOptions.None
+        );
         CleanupToken();
 
         foreach (var token in tokens)
         {
             var subToken = new MPSToken(this, token, _separators, _discard);
-            _subtokens.Add(subToken);
+            mSubtokens.Add(subToken);
         }
     }
 
     // Cleanup and discard handling
     private void CleanupToken()
     {
-        foreach (var subToken in _subtokens)
+        foreach (var subToken in mSubtokens)
         {
             subToken.CleanupToken();
         }
 
-        _subtokens.Clear();
+        mSubtokens.Clear();
     }
 
     private void SetDiscard(bool discard)
     {
         _discard = discard;
-        foreach (var subToken in _subtokens)
+        foreach (var subToken in mSubtokens)
         {
             subToken.SetDiscard(discard);
         }
     }
 
     // Utility methods for finding leaf nodes
-    public MPSToken FindFirstLeafSubtoken(bool includeDiscarded)
+    public MPSToken? FindFirstLeafSubtoken(bool includeDiscarded)
     {
         return FindFirstLeafSubtoken(this, includeDiscarded);
     }
 
-    public MPSToken FindLastLeafSubtoken(bool includeDiscarded)
+    public MPSToken? FindLastLeafSubtoken(bool includeDiscarded)
     {
         return FindLastLeafSubtoken(this, includeDiscarded);
     }
 
-    private MPSToken FindFirstLeafSubtoken(MPSToken token, bool includeDiscarded)
+    private MPSToken? FindFirstLeafSubtoken(MPSToken token, bool includeDiscarded)
     {
         if (token == null) return null;
-        if (token._subtokens.Count == 0) return token;
+        if (token.mSubtokens.Count == 0) return token;
 
-        foreach (var subToken in token._subtokens)
+        foreach (var subToken in token.mSubtokens)
         {
             if (includeDiscarded || !subToken._discard)
             {
@@ -143,13 +143,13 @@ public class MPSToken
         return null;
     }
 
-    private MPSToken FindLastLeafSubtoken(MPSToken token, bool includeDiscarded)
+    private MPSToken? FindLastLeafSubtoken(MPSToken token, bool includeDiscarded)
     {
         if (token == null) return null;
-        if (token._subtokens.Count == 0) return token;
+        if (token.mSubtokens.Count == 0) return token;
 
-        MPSToken last = null;
-        foreach (var subToken in token._subtokens)
+        MPSToken? last = null;
+        foreach (var subToken in token.mSubtokens)
         {
             if (includeDiscarded || !subToken._discard)
             {

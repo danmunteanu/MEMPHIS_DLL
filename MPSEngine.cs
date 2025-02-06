@@ -1,7 +1,4 @@
-﻿using RealityFrameworks;
-using TokenTransform = RealityFrameworks.Transform<MPSToken>;
-
-struct FileRenameInfo
+﻿struct FileRenameInfo
 {
     public MPSToken? Root;
     public string RenameTo;
@@ -94,7 +91,7 @@ public class MPSEngine
             var fnClean = fileName;
             if (fnClean != fileName)
             {
-                mMasterToken.AddSubtoken(fnClean, 0);
+                mMasterToken.InsertSubtoken(fnClean, 0);
                 var sub = mMasterToken.Subtokens.FirstOrDefault();
                 if (sub != null)
                 {
@@ -213,9 +210,9 @@ public class MPSEngine
 
         var selTokenPos = subtokens?.IndexOf(mSelectedSubtoken) ?? int.MaxValue;
         if (direction == EMPSDirection.Left)
-            parent.AddSubtoken(textToInsert, selTokenPos);
+            parent.InsertSubtoken(textToInsert, selTokenPos);
         else
-            parent.AddSubtoken(textToInsert, selTokenPos + 1);
+            parent.InsertSubtoken(textToInsert, selTokenPos + 1);
 
         mRenameTo = ReconstructOutput(mMasterToken);
     }
@@ -327,14 +324,10 @@ public class MPSEngine
     }
 
     public void AddObserver(IEngineObserver observer)
-    {
-        mObservers.Add(observer);
-    }
+        => mObservers.Add(observer);
 
     public void ClearObservers()
-    {
-        mObservers.Clear();
-    }
+        => mObservers.Clear();
 
     public void Update(MPSToken token)
     {
