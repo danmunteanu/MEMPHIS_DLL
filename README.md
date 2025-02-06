@@ -1,7 +1,7 @@
 ## Overview
 
 ### Token
-Can have subtokens. Can split itself based on separators.
+Token is a node in the Tokens tree. Can have subtokens. Splits itself based on separators.
 
 ### TokenEngine
 When a file gets selected, the TokenEngine class "remembers" which files was selected. Woks as a hub for all Token-related operations.

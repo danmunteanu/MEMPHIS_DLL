@@ -1,9 +1,8 @@
 ﻿namespace Memphis
 {
-
-public interface IEngineObserver
-{
-    void Notify();
-}
+    public interface IEngineObserver
+    {
+        void Notify();
+    }
 
 }

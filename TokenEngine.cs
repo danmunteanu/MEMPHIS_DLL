@@ -82,9 +82,7 @@
                 //  load master token and rename to from the map
                 mMasterToken = mapStruct.Root;
                 mRenameTo = mapStruct.RenameTo;
-            }
-            else
-            {
+            } else {
                 //  Must add a new master token
                 mMasterToken = new Token(null, fileName, DefaultSeparators, false);
 
@@ -226,30 +224,33 @@
             //changeCaseAction.Apply(token);
         }
 
-        public string ReconstructOutput(Token token)
+        public string ReconstructOutput(Token? token)
         {
+            if (token == null)
+                return string.Empty;
+
+            if (mMasterToken == null)
+                return string.Empty;
+
             string name = string.Empty;
             string separator = string.Empty;
 
-            if (token != null)
+            if (!token.Subtokens.Any())
             {
-                if (!token.Subtokens.Any())
+                //  does not have subtoken
+                if (!token.Discard)
                 {
-                    if (!token.Discard)
-                    {
-                        var isFirst = token == mMasterToken.FindFirstLeafSubtoken(false);
-                        var isLast = token == mMasterToken.FindLastLeafSubtoken(false);
-                        separator = isFirst ? string.Empty : (isLast ? "." : " ");
-                        name += separator + token.Text;
-                    }
+                    var isFirst = token == mMasterToken.FindFirstLeafSubtoken(false);
+                    var isLast = token == mMasterToken.FindLastLeafSubtoken(false);
+                    separator = isFirst ? string.Empty : (isLast ? "." : " ");
+                    name += separator + token.Text;
                 }
-                else
-                {
-                    foreach (var subToken in token.Subtokens)
-                    {
-                        name += ReconstructOutput(subToken);
-                    }
-                }
+            }
+            else
+            {
+                //  has subtokens
+                foreach (var subToken in token.Subtokens)
+                    name += ReconstructOutput(subToken);
             }
 
             return name;
@@ -272,7 +273,7 @@
         public bool HasFilesToRename()
         {
             return mRenamesMap.Values.Any(
-                entry => entry.Root.Text != entry.RenameTo
+                entry => entry.Root?.Text != entry.RenameTo
             );
         }
 
@@ -281,6 +282,7 @@
 
         public bool RenameOne(string path, string srcFile, string dstFile, bool updateMapEntry = false)
         {
+            //  Rename one file
             var srcPath = System.IO.Path.Combine(path, srcFile);
             var dstPath = System.IO.Path.Combine(path, dstFile);
 
