@@ -1,4 +1,6 @@
-﻿struct FileRenameInfo
+﻿using MEMPHIS;
+
+struct FileRenameInfo
 {
     public MPSToken? Root;
     public string RenameTo;
@@ -10,7 +12,7 @@
     }
 };
 
-public class MPSEngine
+public class MPSEngine : TransformsContainer
 {
     // Fields
     private MPSToken? mMasterToken;
@@ -32,12 +34,6 @@ public class MPSEngine
     private List<IEngineObserver> mObservers = new();
     
     public bool ApplyTransforms { get; set; } = true;
-
-    //  List of transforms
-    private List<TokenTransform> mTransforms = new();
-
-    public IReadOnlyList<TokenTransform> Transforms 
-        => mTransforms.AsReadOnly();
 
     public MPSEngine()
     {
