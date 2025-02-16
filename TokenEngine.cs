@@ -23,7 +23,7 @@
 
         private List<string> mStringsToRemove = new();
 
-        public string DefaultSeparators { get; set; } = string.Empty;
+        public const string K_DEFAULT_SEPARATORS = ",;-_ ";
 
         private bool AlwaysLowcaseExtension { get; set; } = false;
 
@@ -39,7 +39,6 @@
         {
             //  Default settings
             mSelectedSubtoken = null;
-            DefaultSeparators = string.Empty;
             AlwaysLowcaseExtension = false;
         }
 
@@ -62,7 +61,7 @@
             }
         }
 
-        public void SelectMasterToken(string fileName)
+        public void SetMasterToken(string fileName)
         {
             //  Did we get an empty file name?
             if (string.IsNullOrEmpty(fileName))
@@ -84,15 +83,14 @@
                 mRenameTo = mapStruct.RenameTo;
             } else {
                 //  Must add a new master token
-                mMasterToken = new Token(null, fileName, DefaultSeparators, false);
+                mMasterToken = new Token(null, fileName, K_DEFAULT_SEPARATORS, false);
 
                 //  Remove predefined strings from the file name
 
                 Token? tokenToSplit = mMasterToken;
 
                 //  Remove predefined strings first
-                //var cleanFileName = RemoveStringsFromText(fileName);
-                var cleanFileName = fileName;
+                var cleanFileName = RemoveStringsFromText(fileName);
 
                 //  if the file name was modified, insert it as the first subtoken
                 if (cleanFileName != fileName)
@@ -100,7 +98,7 @@
 
                 if (tokenToSplit != null)
                 {
-                    tokenToSplit.Separators = DefaultSeparators;
+                    tokenToSplit.Separators = K_DEFAULT_SEPARATORS;
                     tokenToSplit.Split();
 
                     //  Apply the transforms chain
@@ -157,6 +155,14 @@
                 if (token != mMasterToken)
                     token.Discard = discard;
             }
+        }
+        private string RemoveStringsFromText(string text)
+        {
+            foreach (var str in mStringsToRemove)
+            {
+                text = text.Replace(str, string.Empty);
+            }
+            return text;
         }
 
         public void UpdateSelectedSubtoken(string text, string separators, bool discard, bool forceUpdate = false)
@@ -343,6 +349,12 @@
         {
             return token == mMasterToken;
         }
+
+        public void AddStringToRemove(string item)
+            => mStringsToRemove.Add(item);
+
+        public void ClearStringsToRemove()
+            => mStringsToRemove.Clear();
 
     }
 }

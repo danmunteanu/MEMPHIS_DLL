@@ -8,10 +8,10 @@
 
     public class Token
     {
-        private Token? _parent;
-        private string _text;
-        private string _separators;
-        private bool _discard;
+        private Token? _parent = null;
+        private string _text = string.Empty;
+        private string _separators = string.Empty;
+        private bool _discard = false;
         private List<Token> mSubtokens = new();
 
         // Constructor
@@ -32,7 +32,15 @@
         // Setters and Getters
         public Token? Parent { get { return _parent; } set { _parent = value; } }
         public string Text { get => _text; set => _text = value; }
-        public string Separators { get => _separators; set { _separators = value; if (string.IsNullOrEmpty(_separators)) CleanupToken(); } }
+        public string Separators
+        {
+            get => _separators;
+            set
+            {
+                _separators = value;
+                if (string.IsNullOrEmpty(_separators)) CleanupToken();
+            }
+        }
         public bool Discard { get => _discard; set => SetDiscard(value); }
         public IReadOnlyList<Token> Subtokens => mSubtokens.AsReadOnly();
 
@@ -87,8 +95,8 @@
             if (string.IsNullOrEmpty(_separators)) return;
 
             var tokens = _text.Split(
-                new[] { _separators },
-                StringSplitOptions.None
+                _separators.ToCharArray(),
+                StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries
             );
             CleanupToken();
 
