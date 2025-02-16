@@ -4,7 +4,7 @@ namespace Memphis.Conditions
 {
     public class ConditionEquals : TokenCondition
     {
-        public override bool Evaluate(Token arg)
+        public override bool Evaluate(Token token)
         {
             //if (!token)
             //    return false;
