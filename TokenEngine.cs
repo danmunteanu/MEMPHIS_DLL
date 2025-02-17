@@ -25,7 +25,7 @@
             get => mMasterToken;
         }
 
-        private Token? mSelectedSubtoken;
+        private Token? mSelectedSubtoken = null;
         
         //  List of strings to remove before tokenizing
         private List<string> mStringsToRemove = new();
@@ -34,8 +34,10 @@
         private string? mRenameTo;
         public string? RenameTo { get => mRenameTo; }
 
-        private bool AlwaysLowcaseExtension { get; set; } = false;
+        public bool AlwaysLowcaseExtension { get; set; } = false;
         public bool ApplyTransforms { get; set; } = true;
+
+        public string DefaultSeparators { get; set; } = K_DEFAULT_SEPARATORS; 
 
         //  Map of files to rename
         private Dictionary<ulong, FileRenameInfo> mRenamesMap = new();
