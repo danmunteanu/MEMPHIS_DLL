@@ -1,8 +1,9 @@
 ﻿namespace Memphis
 {
+    // Methods for error message handling
+
     public partial class TokenEngine
     {
-        // Methods for message handling
         public void PushMessage(string msg)
             => mMessages.Enqueue(msg);
 

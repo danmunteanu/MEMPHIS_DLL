@@ -14,26 +14,35 @@
 
     public partial class TokenEngine : TransformContainer
     {
-        // Fields
-        private Token? mMasterToken;
-        private Token? mSelectedSubtoken;
+        //  CONSTANTS
+        public const string K_DEFAULT_SEPARATORS = ",;-_ ";
 
+        //  MASTER TOKEN
+        private Token? mMasterToken = null;
+
+        public Token? MasterToken
+        {
+            get => mMasterToken;
+        }
+
+        private Token? mSelectedSubtoken;
+        
+        //  List of strings to remove before tokenizing
+        private List<string> mStringsToRemove = new();
+
+        //  RENAME TO for selected token
         private string? mRenameTo;
         public string? RenameTo { get => mRenameTo; }
 
-        private List<string> mStringsToRemove = new();
-
-        public const string K_DEFAULT_SEPARATORS = ",;-_ ";
-
         private bool AlwaysLowcaseExtension { get; set; } = false;
+        public bool ApplyTransforms { get; set; } = true;
 
         //  Map of files to rename
         private Dictionary<ulong, FileRenameInfo> mRenamesMap = new();
 
         //  List of engine observers
+        //  change to Delegate?
         private List<IEngineObserver> mObservers = new();
-
-        public bool ApplyTransforms { get; set; } = true;
 
         public TokenEngine()
         {
@@ -42,26 +51,7 @@
             AlwaysLowcaseExtension = false;
         }
 
-        public void ApplyTransformsToToken(Token token)
-        {
-            if (token == null)
-                return;
-
-            foreach (var transform in mTransforms)
-            {
-                if (transform.Enabled)
-                    transform.Apply(token);
-            }
-
-            //  apply on subtokens
-            if (token.Subtokens.Any())
-            {
-                foreach (var subToken in token.Subtokens)
-                    ApplyTransformsToToken(subToken);
-            }
-        }
-
-        public void SetMasterToken(string fileName)
+        public void SelectMasterToken(string fileName)
         {
             //  Did we get an empty file name?
             if (string.IsNullOrEmpty(fileName))
@@ -156,6 +146,26 @@
                     token.Discard = discard;
             }
         }
+
+        public void ApplyTransformsToToken(Token token)
+        {
+            if (token == null)
+                return;
+
+            foreach (var transform in mTransforms)
+            {
+                if (transform.Enabled)
+                    transform.Apply(token);
+            }
+
+            //  apply on subtokens
+            if (token.Subtokens.Any())
+            {
+                foreach (var subToken in token.Subtokens)
+                    ApplyTransformsToToken(subToken);
+            }
+        }
+
         private string RemoveStringsFromText(string text)
         {
             foreach (var str in mStringsToRemove)
