@@ -15,7 +15,7 @@
     public partial class Engine : TransformContainer
     {
         //  CONSTANTS
-        public const string K_DEFAULT_SEPARATORS = ",;-_ ";
+        public const string K_DEFAULT_SEPARATORS = ",;-._ ";
 
         //  MASTER TOKEN
         private Token? mMasterToken = null;
