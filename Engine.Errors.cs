@@ -2,7 +2,7 @@
 {
     // Methods for error message handling
 
-    public partial class TokenEngine
+    public partial class Engine
     {
         public void PushMessage(string msg)
             => mMessages.Enqueue(msg);

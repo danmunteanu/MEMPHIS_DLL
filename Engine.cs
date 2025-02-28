@@ -12,7 +12,7 @@
         }
     };
 
-    public partial class TokenEngine : TransformContainer
+    public partial class Engine : TransformContainer
     {
         //  CONSTANTS
         public const string K_DEFAULT_SEPARATORS = ",;-_ ";
@@ -46,7 +46,7 @@
         //  change to Delegate?
         private List<IEngineObserver> mObservers = new();
 
-        public TokenEngine()
+        public Engine()
         {
             //  Default settings
             mSelectedSubtoken = null;
