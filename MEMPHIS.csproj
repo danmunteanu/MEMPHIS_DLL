@@ -1,14 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Memphis</RootNamespace>
+    <AssemblyName>$(MSBuildProjectName.ToLower())</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\COMMON_FORMS\COMMON_FORMS.csproj" />
     <ProjectReference Include="..\REALITY_FRAMEWORKS_DLL\RealityFrameworks.csproj" />
+    <ProjectReference Include="..\REALITY_FRAMEWORKS_DLL\REALITY_FRAMEWORKS.csproj" />
   </ItemGroup>
 
 </Project>
