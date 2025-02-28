@@ -48,9 +48,6 @@
 
         public Engine()
         {
-            //  Default settings
-            mSelectedSubtoken = null;
-            AlwaysLowcaseExtension = false;
         }
 
         public void SelectMasterToken(string fileName)
