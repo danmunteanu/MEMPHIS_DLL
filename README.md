@@ -21,7 +21,7 @@ Until it's ready, here's a class overview:
 Token is a node in the Tokens tree. It can have subtokens. It can split itself, based on separators.
 
 ### TokenEngine
-It remembers all the files that were selected. It's supposed to work in tandem with a list of files (FilesListComponent, anyone? It's in COMMON_FORMS).
+It remembers all the files that were selected. It's supposed to work in tandem with FilesListComponent from COMMON_FORMS.
 When a file gets selected, the TokenEngine will "remember" which files was selected and stores it in a map.
 Woks as a hub for all Token-related operations.
 
