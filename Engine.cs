@@ -26,6 +26,7 @@
         }
 
         private Token? mSelectedSubtoken = null;
+        public Token? SelectedSubtoken { get => mSelectedSubtoken; }
         
         //  List of strings to remove before tokenizing
         private List<string> mStringsToRemove = new();
@@ -58,7 +59,7 @@
                 mMasterToken = null;
                 mSelectedSubtoken = null;
                 mRenameTo = string.Empty;
-                return;
+                throw new Exception("Filename is null or empty");
             }
 
             //  Compute hash for file name
@@ -71,31 +72,33 @@
                 mMasterToken = mapStruct.Root;
                 mRenameTo = mapStruct.RenameTo;
             } else {
-                //  Must add a new master token
+                //  Must add a new master token with default values
                 mMasterToken = new Token(null, fileName, K_DEFAULT_SEPARATORS, false);
-
-                //  Remove predefined strings from the file name
 
                 Token? tokenToSplit = mMasterToken;
 
-                //  Remove predefined strings first
+                //  Remove predefined strings from file name before anything else
                 var cleanFileName = RemoveStringsFromText(fileName);
 
                 //  if the file name was modified, insert it as the first subtoken
                 if (cleanFileName != fileName)
+                {
                     tokenToSplit = mMasterToken.InsertSubtoken(cleanFileName);
+                    tokenToSplit.Separators = K_DEFAULT_SEPARATORS;
+                }
 
                 if (tokenToSplit != null)
                 {
-                    tokenToSplit.Separators = K_DEFAULT_SEPARATORS;
                     tokenToSplit.Split();
 
-                    //  Apply the transforms chain
+                    //  Apply transforms chain
                     if (ApplyTransforms)
                         ApplyTransformsToToken(tokenToSplit);
                 }
 
                 mRenameTo = ReconstructOutput(mMasterToken);
+
+                //  add entry to the renames map
                 mRenamesMap[(ulong)hash] = new FileRenameInfo(mMasterToken, mRenameTo);
             }
 
@@ -107,6 +110,7 @@
         {
             if (token == null) return;
 
+            //  What if it's not in the subtokens list?
             mSelectedSubtoken = token;
 
             if (updateOutput)
