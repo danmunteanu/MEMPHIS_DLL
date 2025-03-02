@@ -1,7 +1,7 @@
 ﻿namespace Memphis
 {
     //  Contains Transforms and provides an interface for handling them
-    public class TransformContainer
+    public class TransformsContainer
     {
         //  List of transforms
         protected List<TokenTransform> mTransforms = new();

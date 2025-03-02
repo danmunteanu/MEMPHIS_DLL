@@ -12,7 +12,7 @@
         }
     };
 
-    public partial class Engine : TransformContainer
+    public partial class Engine : TransformsContainer
     {
         //  CONSTANTS
         public const string K_DEFAULT_SEPARATORS = ",;-._ ";
