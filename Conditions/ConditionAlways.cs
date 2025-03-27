@@ -2,6 +2,8 @@
 {
     public class ConditionAlways : TokenCondition
     {
+        //  ALWAYS TRUE for a Token
+
         public ConditionAlways() { }
 
         public override string Description()
