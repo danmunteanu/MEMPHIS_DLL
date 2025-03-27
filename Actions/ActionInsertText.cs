@@ -17,19 +17,14 @@ namespace Memphis.Actions
 
         }
 
-        public override string ToString()
+        protected override void UpdateDescription()
         {
             StringBuilder sb = new();
             sb.Append("InsertText (\"");
             sb.Append(TextToAdd);
             sb.Append("\") on Position ");
             sb.Append(Position);
-            return sb.ToString();
-        }
-
-        protected override void UpdateDescription()
-        {
-            mDescription = GetType().Name;
+            mDescription = sb.ToString();
         }
     }
 }
