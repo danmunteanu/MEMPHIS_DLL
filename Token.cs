@@ -105,7 +105,7 @@
 
             foreach (var token in tokens)
             {
-                var subToken = new Token(this, token, mSeparators, mDiscard);
+                var subToken = new Token(this, token, string.Empty, mDiscard);
                 mSubtokens.Add(subToken);
             }
         }
