@@ -14,7 +14,7 @@ namespace Memphis
         }
     };
 
-    public partial class MemphisEngine : TransformsContainer<Token>
+    public partial class MemphisEngine : TransformsContainer<Token>, IEngineBase
     {
         //  CONSTANTS
         public const string K_DEFAULT_SEPARATORS = ",;-._ ";

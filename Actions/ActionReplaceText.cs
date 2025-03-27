@@ -6,13 +6,15 @@
 
         public string Replace {  get; set; } = string.Empty;
 
-        private EngineBase? mEngine = null;
+        private IEngineBase? mEngine = null;
 
-        public ActionReplaceText(EngineBase engine, string search = "", string replace = "")
+        public ActionReplaceText(IEngineBase engine, string search = "", string replace = "")
         {
             mEngine = engine;
             Search = search;
             Replace = replace;
+
+            UpdateDescription();
         }
         public override void Execute(Token token)
         {
@@ -24,6 +26,11 @@
 
             string result = token.Text.Replace(Search, Replace);
             token.Text = result;
+        }
+
+        protected override void UpdateDescription()
+        {
+            mDescription = GetType().Name;
         }
     }
 }

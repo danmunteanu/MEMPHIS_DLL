@@ -4,12 +4,14 @@
     {
         public string Separators { get; set; } = string.Empty;
 
-        private EngineBase? mEngine = null;
+        private IEngineBase? mEngine = null;
 
-        public ActionSetSeparators(EngineBase engine, string separators = "") 
+        public ActionSetSeparators(IEngineBase engine, string separators = "") 
         { 
             mEngine = engine;
             Separators = separators;
+
+            UpdateDescription();
         }
 
         public override void Execute(Token token)
@@ -23,6 +25,11 @@
             token.Separators = Separators;
 
             mEngine.Update(token);
+        }
+
+        protected override void UpdateDescription()
+        {
+            mDescription = GetType().Name;
         }
     }
 }

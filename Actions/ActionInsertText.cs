@@ -5,7 +5,8 @@ namespace Memphis.Actions
     public class ActionInsertText : TokenAction
     {
         public ActionInsertText(string textToAdd = "", int position = int.MaxValue) 
-        { 
+        {
+            UpdateDescription();
         }
 
         public string TextToAdd {  get; set; } = string.Empty;
@@ -24,6 +25,11 @@ namespace Memphis.Actions
             sb.Append("\") on Position ");
             sb.Append(Position);
             return sb.ToString();
+        }
+
+        protected override void UpdateDescription()
+        {
+            mDescription = GetType().Name;
         }
     }
 }

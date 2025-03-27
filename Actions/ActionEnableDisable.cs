@@ -4,12 +4,14 @@
     {
         public bool Disable { get; set; } = false;  //  Enable by default
 
-        EngineBase? Engine { get; set; } = null;
+        IEngineBase? Engine { get; set; } = null;
 
-        public ActionEnableDisable(EngineBase engineBase, bool disable = false)
+        public ActionEnableDisable(IEngineBase engineBase, bool disable = false)
         {
             Disable = disable;
             Engine = engineBase;
+
+            UpdateDescription();
         }
 
         public override void Execute(Token token)
@@ -22,6 +24,11 @@
 
             if (!Engine.IsTokenCurrentRoot(token))
                 token.Discard = Disable;
+        }
+
+        protected override void UpdateDescription()
+        {
+            mDescription = GetType().Name;
         }
     }
 }

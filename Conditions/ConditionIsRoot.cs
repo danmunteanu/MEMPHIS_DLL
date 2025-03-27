@@ -2,9 +2,9 @@
 {
     public class ConditionIsRoot : TokenCondition
     {
-        EngineBase? mEngine = null;
+        IEngineBase? mEngine = null;
 
-        public ConditionIsRoot(EngineBase engine) 
+        public ConditionIsRoot(IEngineBase engine) 
         { 
             mEngine = engine;
         }

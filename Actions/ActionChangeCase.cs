@@ -6,15 +6,17 @@
         public bool OnlyFirst { get; set; } = true;
         public bool Recursive { get; set; } = true;
 
-        private EngineBase _engineBase;
+        private IEngineBase _engineBase;
 
-        public ActionChangeCase(EngineBase engineBase, bool upcase, bool all, bool recursive)
+        public ActionChangeCase(IEngineBase engineBase, bool upcase, bool all, bool recursive)
         {
             _engineBase = engineBase;
 
             Upcase = upcase;
             OnlyFirst = !all;
             Recursive = recursive;
+
+            UpdateDescription();
         }
 
         public override void Execute(Token token)
@@ -76,6 +78,11 @@
             //        }
             //    }
             //}
+        }
+
+        protected override void UpdateDescription()
+        {
+            mDescription = "ActionRenameFile";
         }
 
         public override string ToString()
