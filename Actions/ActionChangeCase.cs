@@ -8,7 +8,7 @@
 
         private IEngineBase _engineBase;
 
-        public ActionChangeCase(IEngineBase engineBase, bool upcase, bool all, bool recursive)
+        public ActionChangeCase(IEngineBase engineBase, bool upcase = true, bool all = false, bool recursive = true)
         {
             _engineBase = engineBase;
 
