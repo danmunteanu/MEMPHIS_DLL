@@ -1,4 +1,6 @@
-﻿namespace Memphis
+﻿using RealityFrameworks;
+
+namespace Memphis
 {
     struct FileRenameInfo
     {
@@ -12,7 +14,7 @@
         }
     };
 
-    public partial class Engine : TransformsContainer
+    public partial class MemphisEngine : TransformsContainer<Token>
     {
         //  CONSTANTS
         public const string K_DEFAULT_SEPARATORS = ",;-._ ";
@@ -47,7 +49,7 @@
         //  change to Delegate?
         private List<IEngineObserver> mObservers = new();
 
-        public Engine()
+        public MemphisEngine()
         {
         }
 

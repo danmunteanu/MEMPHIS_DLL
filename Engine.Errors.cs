@@ -2,7 +2,7 @@
 {
     // Methods for error message handling
 
-    public partial class Engine
+    public partial class MemphisEngine
     {
         public void PushMessage(string msg)
             => mMessages.Enqueue(msg);
