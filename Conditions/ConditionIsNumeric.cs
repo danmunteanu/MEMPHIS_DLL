@@ -10,7 +10,7 @@
             if (token.Text == null)
                 return false;
 
-            return int.TryParse(token.Text, out _);
+            return float.TryParse(token.Text, out _);
         }
 
         public override string Description()

@@ -4,10 +4,14 @@ namespace Memphis.Conditions
 {
     public class ConditionEquals : TokenCondition
     {
+        public string Text { get; set; } = string.Empty;
+
         public override bool Evaluate(Token token)
         {
-            //if (!token)
-            //    return false;
+            if (token == null)
+                return false;
+
+            return token.Text == Text;
 
             //BoostSeparator separ(L";");
             //BoostTokenizer tokenizer(m_text, separ);
