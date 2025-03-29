@@ -22,7 +22,7 @@ namespace Memphis
         //  MASTER TOKEN
         private Token? mMasterToken = null;
 
-        public Token? MasterToken
+        public Token? RootToken
         {
             get => mMasterToken;
         }
