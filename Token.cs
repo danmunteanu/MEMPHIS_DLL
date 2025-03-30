@@ -6,13 +6,14 @@
         Right
     }
 
-    public class Token
+    public class Token : IDisposable
     {
         private Token? mParent = null;
         private string mText = string.Empty;
         private string mSeparators = string.Empty;
         private bool mDiscard = false;
         private List<Token> mSubtokens = new();
+        private bool mDisposed = false;
 
         // Constructor
         public Token(Token? parent = null, string text = "", string separators = "", bool discard = false)
@@ -23,32 +24,55 @@
             mDiscard = discard;
         }
 
-        // Destructor (for cleanup)
-        ~Token()
+        // Dispose pattern implementation
+        public void Dispose()
         {
-            CleanupToken();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!mDisposed)
+            {
+                if (disposing)
+                {
+                    CleanupToken();
+                    mParent = null;
+                    mText = string.Empty;
+                    mSeparators = string.Empty;
+                    mDiscard = false;
+                    mSubtokens.Clear();
+                }
+                mDisposed = true;
+            }
         }
 
         // Setters and Getters
         public Token? Parent { get { return mParent; } set { mParent = value; } }
-        public string Text { get => mText; set => mText = value; }
+        public string Text 
+        { 
+            get => mText; 
+            set => mText = value ?? string.Empty; 
+        }
         public string Separators
         {
             get => mSeparators;
             set
             {
-                mSeparators = value;
+                mSeparators = value ?? string.Empty;
                 if (string.IsNullOrEmpty(mSeparators)) CleanupToken();
             }
         }
         public bool Discard { get => mDiscard; set => SetDiscard(value); }
-
         public bool Enabled { get => !Discard; set => SetDiscard(!value); }
-
         public IReadOnlyList<Token> Subtokens => mSubtokens.AsReadOnly();
 
         public Token InsertSubtoken(string text, int pos = int.MaxValue)
         {
+            if (text == null) throw new ArgumentNullException(nameof(text));
+            if (pos < 0) throw new ArgumentOutOfRangeException(nameof(pos), "Position cannot be negative");
+
             var newToken = new Token(this, text);
             if (pos == int.MaxValue || pos >= mSubtokens.Count)
             {
@@ -62,10 +86,23 @@
         }
 
         public void RemoveSubtoken(Token token)
-            => mSubtokens.Remove(token);
+        {
+            if (token == null) return;
+            
+            if (mSubtokens.Remove(token))
+            {
+                token.Parent = null;  // Clear the parent reference
+            }
+        }
 
         public void ClearSubtokens()
-            => mSubtokens.Clear();
+        {
+            foreach (var token in mSubtokens)
+            {
+                token.Parent = null;  // Clear parent references for all subtokens
+            }
+            mSubtokens.Clear();
+        }
 
         public bool ContainsSubtoken(Token token)
             => mSubtokens.Contains(token);
@@ -113,12 +150,23 @@
         // Cleanup and discard handling
         private void CleanupToken()
         {
-            foreach (var subToken in mSubtokens)
-            {
-                subToken.CleanupToken();
-            }
+            // Use a stack to avoid recursion
+            var stack = new Stack<Token>();
+            stack.Push(this);
 
-            mSubtokens.Clear();
+            while (stack.Count > 0)
+            {
+                var currentToken = stack.Pop();
+                
+                // Add all subtokens to the stack
+                foreach (var subToken in currentToken.mSubtokens)
+                {
+                    stack.Push(subToken);
+                }
+
+                // Clear the subtokens list
+                currentToken.mSubtokens.Clear();
+            }
         }
 
         private void SetDiscard(bool discard)
