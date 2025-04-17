@@ -82,12 +82,7 @@
 
         protected override void UpdateDescription()
         {
-            mDescription = "ActionRenameFile";
-        }
-
-        public override string ToString()
-        {
-            return "ChangeCase";
+            mDescription = "ActionChangeCase";
         }
     }
 
