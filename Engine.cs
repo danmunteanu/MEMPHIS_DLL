@@ -14,7 +14,7 @@ namespace Memphis
         }
     };
 
-    public partial class MemphisEngine : TransformsContainer<Token>, IEngineBase
+    public partial class Engine : TransformsContainer<Token>, IEngineBase
     {
         //  CONSTANTS
         public const string K_DEFAULT_SEPARATORS = ",;-._ ";
@@ -49,7 +49,7 @@ namespace Memphis
         //  change to Delegate?
         private List<IEngineObserver> mObservers = new();
 
-        public MemphisEngine()
+        public Engine()
         {
         }
 
