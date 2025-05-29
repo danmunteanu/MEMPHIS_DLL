@@ -127,15 +127,23 @@ namespace Memphis
         }
 
         public void UpdateToken(
-            ref Token token,
-            string text,
-            string separators,
-            bool discard,
-            bool forceUpdate = false)
+            ref Token token,    //  Token to update
+            
+            string text,                //  New text
+            string separators,          //  New separators
+            bool discard,               //  New discard
+            bool forceUpdate = false)   //  Force update
         {
             if (token == null) return;
 
-            if (token.Text != text || token.Separators != separators || forceUpdate)
+            //  Have at least one change?
+            bool haveUpdate = 
+                token.Text != text || 
+                token.Separators != separators || 
+                forceUpdate;
+                //  discard is handled separately
+
+            if (haveUpdate)
             {
                 var parent = token.Parent;
                 token.ClearSubtokens();
@@ -147,6 +155,7 @@ namespace Memphis
             }
             else if (token.Discard != discard || forceUpdate)
             {
+                //  Discard only non-master tokens
                 if (token != mMasterToken)
                     token.Discard = discard;
             }
