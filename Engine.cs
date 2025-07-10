@@ -34,8 +34,8 @@ namespace Memphis
         private List<string> mStringsToRemove = new();
 
         //  RENAME TO for selected token
-        private string? mRenameTo;
-        public string? RenameTo { get => mRenameTo; }
+        private string mRenameTo;
+        public string RenameTo { get => mRenameTo; }
 
         public bool AlwaysLowcaseExtension { get; set; } = false;
         public bool ApplyTransforms { get; set; } = true;
